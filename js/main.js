@@ -134,37 +134,31 @@ function renderMovies(arr, node, regex = "") {
     cloneNode.querySelector(".js-modal-btn").dataset.imdbId = item.imdb_id;
 
     // Check if the movie is bookmarked
-    const isBookmarked = bookmarksArray.some((bookmarkedMovie) => {
-      return bookmarkedMovie.imdb_id === item.imdb_id;
-    });
+    const isBookmarked = bookmarksArray.some(
+      (bookmarkedMovie) => bookmarkedMovie.imdb_id === item.imdb_id
+    );
 
     // Adjust button and styling based on bookmark status
-    const bookmarkButton = cloneNode.querySelector(".js-bookmark-btn");
-    const buttonText = bookmarkButton.querySelector(".button-text");
     if (isBookmarked) {
-      buttonText.innerText = "Bookmarked";
-      bookmarkButton.classList.add(
-        "bookmarked",
-        "bg-yellow-400",
-        "hover:bg-yellow-400",
-        "active:bg-yellow-400"
+      const buttonText = cloneNode.querySelector(
+        ".js-bookmark-btn .button-text"
       );
+      buttonText.innerText = "Bookmarked";
+      cloneNode
+        .querySelector(".js-bookmark-btn")
+        .classList.add(
+          "bookmarked",
+          "bg-yellow-400",
+          "hover:bg-yellow-400",
+          "active:bg-yellow-400"
+        );
     } else {
-      bookmarkButton.dataset.imdbId = item.imdb_id;
+      cloneNode.querySelector(".js-bookmark-btn").dataset.imdbId = item.imdb_id;
     }
 
     fragment.appendChild(cloneNode);
   });
-
-  // Check if there are no results
-  if (arr.length === 0) {
-    let noResultsMessage = document.createElement("p");
-    noResultsMessage.textContent = "No matching movies found";
-    noResultsMessage.classList.add("text-center", "text-gray-500", "my-4");
-    node.appendChild(noResultsMessage);
-  } else {
-    node.appendChild(fragment);
-  }
+  node.appendChild(fragment);
 }
 
 // Initial rendering of movies
@@ -190,7 +184,7 @@ elFormForFunctionality.addEventListener("submit", (event) => {
     renderMovies(allFunctionality, elCardWrapper, searchRegex);
     console.log("hi Im woriking 🤞");
   } else {
-    renderMovies(movies.slice(0, 15), elCardWrapper);
+    renderMovies(moviesSliced, elCardWrapper);
     console.log("No matching movies found");
   }
 });
@@ -295,10 +289,10 @@ elCanvasWrapperUl.addEventListener("click", (event) => {
     // Find the index of the movie with the given imdb_id in bookmarksArray
     const index = bookmarksArray.findIndex((item) => item.imdb_id === imdb);
     if (index !== -1) {
-      bookmarksArray.splice(index, 1);
-      updateBookmarkBadge();
-      updateLocalStorage();
-      renderBookmarkedMovies(bookmarksArray, elCanvasWrapperUl);
+      bookmarksArray.splice(index, 1); // Remove the movie from bookmarksArray
+      updateBookmarkBadge(); // Update the badge count
+      updateLocalStorage(); // Update local storage
+      renderBookmarkedMovies(bookmarksArray, elCanvasWrapperUl); // Re-render bookmarked movies
     }
   }
 });
@@ -306,4 +300,4 @@ elCanvasWrapperUl.addEventListener("click", (event) => {
 // Update local storage and re-render bookmarked movies
 updateLocalStorage();
 renderBookmarkedMovies(bookmarksArray, elCanvasWrapperUl);
-renderMovies(movies.slice(0, 15), elCardWrapper);
+renderMovies(movies.slice(0, 15, elCardWrapper));
